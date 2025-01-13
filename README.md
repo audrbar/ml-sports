@@ -1,5 +1,4 @@
-# ml-sports
-A machine learning pipeline to classify sports articles scraped from websites
+# A machine learning pipeline to classify sports articles
 1. Introduction
 Objective: Build a machine learning pipeline to classify sports articles scraped from websites like ESPN or Sports Illustrated.
 Scope: The project includes:
@@ -16,7 +15,6 @@ Extract relevant text (title, content) and metadata (e.g., category).
 Save the data in a structured format (CSV/JSON).
 Output: A dataset containing article text and their respective sport categories.
 3. Data Preprocessing
-
 Objective: Prepare the scraped data for model training.
 Steps:
 Clean the text (remove HTML tags, punctuation, stopwords, etc.).
@@ -24,7 +22,6 @@ Normalize text (convert to lowercase, lemmatize, or stem).
 Tokenize and vectorize the text (using methods like TF-IDF or word embeddings).
 Output: A preprocessed dataset ready for model training.
 4. Machine Learning Classification
-
 Objective: Use a traditional machine learning algorithm for classification.
 Steps:
 Split the dataset into training and testing sets.
@@ -32,7 +29,6 @@ Use classifiers like Logistic Regression, Support Vector Machines (SVM), or Rand
 Evaluate the model using metrics like accuracy, precision, recall, and F1-score.
 Output: A baseline classification model.
 5. Neural Network Models
-
 5.1. Model 1: Simple Neural Network
 Architecture:
 Input layer: Accepts vectorized text.
@@ -46,26 +42,23 @@ RNN variants: LSTM or GRU for handling sequential text data.
 Transformer-based models: Use BERT, RoBERTa, or similar pre-trained models.
 Objective: Leverage advanced deep learning techniques for better performance.
 6. Model Evaluation
-
 Steps:
 Evaluate each model using the testing dataset.
 Compare the performance of the ML classifier, simple NN, and advanced NN.
 Use metrics like confusion matrix, precision, recall, and F1-score.
 7. Deployment and Visualization
-
 Objective: Make the project interactive and presentable.
 Steps:
 Deploy the model as a web app using Flask or Streamlit.
 Visualize results using charts and graphs (e.g., accuracy comparisons).
 8. Conclusion
-
 Summarize:
 Key findings from the project.
 Challenges faced and how they were addressed.
 Future Scope:
 Potential improvements (e.g., using more data, fine-tuning models, or adding categories).
 
-Key Recommendations:
+## Key Recommendations:
 For easier scraping: Consider Sports Illustrated, CBS Sports, or Fox Sports.
 For rich tagging: ESPN, Goal.com, or CBS Sports.
 Always review the Terms of Service for compliance before proceeding with scraping.
