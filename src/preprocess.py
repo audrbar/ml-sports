@@ -1,21 +1,29 @@
 import re
 import string
+import nltk
 from bs4 import BeautifulSoup
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
-from data_frame import adjust_pandas_display, load_csv
+from nltk.stem import WordNetLemmatizer, PorterStemmer
+from utils import adjust_pandas_display, load_csv
+
 # Download stopwords if not already present
-import nltk
-nltk.download('stopwords')
-nltk.download('punkt')
+# nltk.download('stopwords')
+# nltk.download('punkt')
+# nltk.download('wordnet')
+
+# Initialize lemmatizer and stemmer
+lemmatizer: WordNetLemmatizer = WordNetLemmatizer()
+stemmer = PorterStemmer()
 
 
-def clean_text(text):
+def normalize_text(text, lemmatize=True, stem=False):
     """Cleans the input text by removing HTML tags, punctuation, stopwords, and extra whitespace.
 
     Parameters:
         text (str): The text to be cleaned.
-
+        lemmatize (bool): Whether to apply lemmatization (default: True).
+        stem (bool): Whether to apply stemming (default: False).
     Returns:
         str: The cleaned text.
     """
@@ -24,6 +32,9 @@ def clean_text(text):
 
     # Remove HTML tags
     text = BeautifulSoup(text, "html.parser").get_text()
+
+    # Remove specific unwanted symbols
+    text = text.replace("â", "")
 
     # Remove punctuation
     text = text.translate(str.maketrans('', '', string.punctuation))
@@ -41,18 +52,22 @@ def clean_text(text):
     stop_words = set(stopwords.words('english'))
     tokens = [word for word in tokens if word not in stop_words]
 
+    # Normalize tokens: lemmatization or stemming
+    if lemmatize:
+        tokens = [lemmatizer.lemmatize(word) for word in tokens]
+    elif stem:
+        tokens = [stemmer.stem(word) for word in tokens]
+
     # Join tokens back into a single string
-    cleaned_text = ' '.join(tokens)
+    normalized_text = ' '.join(tokens)
 
-    # Remove extra whitespace
-    cleaned_text = re.sub(r'\s+', ' ', cleaned_text).strip()
-
-    return cleaned_text
+    return normalized_text
 
 
 # Preprocessing function for DataFrame
 def preprocess_dataset(data_frame, text_columns, output_file="articles_preprocessed.csv"):
-    """Preprocesses specified text columns in a DataFrame and saves the preprocessed dataset to a file.
+    """Cleans and normalizes the input text by removing HTML tags, punctuation, stopwords,
+    and normalizing text via lemmatization or stemming.
 
     Parameters:
         data_frame (pd.DataFrame): The input DataFrame containing text columns.
@@ -66,7 +81,7 @@ def preprocess_dataset(data_frame, text_columns, output_file="articles_preproces
     for col in text_columns:
         if col in data_frame.columns:
             print(f"Cleaning column: {col}")
-            data_frame[col] = data_frame[col].apply(clean_text)
+            data_frame[col] = data_frame[col].fillna("").apply(normalize_text)
 
     # Save the preprocessed DataFrame to a file
     data_frame.to_csv(output_file, index=False)
@@ -76,16 +91,18 @@ def preprocess_dataset(data_frame, text_columns, output_file="articles_preproces
 
 # Run preprocessing
 if __name__ == "__main__":
-    # Adjust pandas display settings
-    adjust_pandas_display(max_rows=None, max_columns=None, width=1000)
+    try:
+        # Adjust pandas display settings
+        adjust_pandas_display(max_rows=None, max_columns=None, width=1000)
 
-    # Load a CSV file into a DataFrame
-    df = load_csv("articles_cleaned.csv")
+        # Load and preprocess dataset
+        df = load_csv("articles_cleaned.csv")
+        preprocessed_df = preprocess_dataset(
+            df, text_columns=['title', 'intro', 'author', 'category']
+        )
 
-    # Preprocess the dataset
-    preprocessed_df = preprocess_dataset(
-        df, text_columns=['title', 'intro', 'author', 'category'], output_file="article_preprocessed.csv"
-    )
+        # Display the preprocessed DataFrame
+        print(f"\nPreprocessed DataFrame:\n{preprocessed_df.head()}")
 
-    # Display the preprocessed DataFrame
-    print(f"\nPreprocessed DataFrame:\n{preprocessed_df}")
+    except Exception as e:
+        print(f"An error occurred during preprocessing: {e}")
