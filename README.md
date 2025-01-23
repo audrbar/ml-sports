@@ -19,7 +19,7 @@ Objective: Prepare the scraped data for model training.
 Steps:
 Clean the text (remove HTML tags, punctuation, stopwords, etc.).
 Normalize text (convert to lowercase, lemmatize, or stem).
-Tokenize and vectorize the text (using methods like TF-IDF or word embeddings).
+Tokenize and vectorize the text (using methods like TF-IDF, ngram or word embeddings).
 Output: A preprocessed dataset ready for model training.
 4. Machine Learning Classification
 Objective: Use a traditional machine learning algorithm for classification.
