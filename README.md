@@ -18,16 +18,14 @@ Output: A dataset containing article text and their respective sport categories.
 Objective: Prepare the scraped data for model training.
 Steps:
 Clean the text (remove HTML tags, punctuation, stopwords, etc.).
-Normalize text (convert to lowercase, lemmatize, or stem).
+Normalize text (convert to lowercase, lemmatize (converts words to their base form) (NLTK's WordNetLemmatizer), \
+or stemming (Reduces words to their root form) NLTK's PorterStemmer for stemming).
 Tokenize and vectorize the text (using methods like TF-IDF, ngram or word embeddings).
 Output: A preprocessed dataset ready for model training.
 4. Machine Learning Classification
-Objective: Use a traditional machine learning algorithm for classification.
-Steps:
-Split the dataset into training and testing sets.
-Use classifiers like Logistic Regression, Support Vector Machines (SVM), or Random Forests.
-Evaluate the model using metrics like accuracy, precision, recall, and F1-score.
-Output: A baseline classification model.
+Objective: Use a traditional machine learning algorithm for classification. Split the dataset into training and \
+testing sets. Use classifiers like Logistic Regression, Support Vector Machines (SVM), or Random Forests. Evaluate \
+the model using metrics like accuracy, precision, recall, and F1-score. Output: A baseline classification model.
 5. Neural Network Models
 5.1. Model 1: Simple Neural Network
 Architecture:
