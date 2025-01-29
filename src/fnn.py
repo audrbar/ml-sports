@@ -121,7 +121,7 @@ def evaluate_model(model_seq, X_test, y_test):
     return test_accuracy
 
 
-def save_model_and_encoder(model_seq, labels_encoder, model_path="snn_classification_model.keras",
+def save_model_and_encoder(model_seq, labels_encoder, model_path="fnn_classification_model.keras",
                            encoder_path="label_encoder.pkl"):
     """Saves the trained model and label encoder.
 

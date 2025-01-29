@@ -1,8 +1,8 @@
-import os
+import time
 import requests
 from bs4 import BeautifulSoup
-import pandas as pd
-import time
+from utils import append_csv
+
 
 # Define URL and headers
 SI_URL = "https://www.si.com/"
@@ -27,6 +27,21 @@ def get_page_content(url):
         return None
 
 
+def scrape_web_page(base_url, sub_urls):
+    """Scrapes multiple pages of articles."""
+    all_articles = []
+    for sub_url in sub_urls:
+        url = f"{base_url}{sub_url}"  # Adjust pagination URL based on site structure
+        print(f"- scraping page: {url}")
+        content = get_page_content(url)
+        if content:
+            articles_html = extract_articles(content)
+            all_articles.extend(articles_html)
+        time.sleep(2)  # Add delay to prevent overloading the server
+
+    return all_articles
+
+
 def extract_articles(content):
     """Extracts articles from the HTML content."""
     soup = BeautifulSoup(content, "lxml")
@@ -46,40 +61,8 @@ def extract_articles(content):
     return articles_dict
 
 
-def scrape_web_page(base_url, sub_urls):
-    """Scrapes multiple pages of articles."""
-    all_articles = []
-    for sub_url in sub_urls:
-        url = f"{base_url}{sub_url}"  # Adjust pagination URL based on site structure
-        print(f"Scraping page: {url}")
-        content = get_page_content(url)
-        if content:
-            articles_html = extract_articles(content)
-            all_articles.extend(articles_html)
-        time.sleep(2)  # Add delay to prevent overloading the server
-
-    return all_articles
-
-
-def append_csv(data, filename="articles_scraped.csv"):
-    """Appends the scraped data to a CSV file."""
-    # Check if the file already exists
-    file_exists = os.path.isfile(filename)
-
-    # Convert the data to a DataFrame
-    df = pd.DataFrame(data)
-
-    # Append to the file if it exists, otherwise create it
-    if file_exists:
-        df.to_csv(filename, mode='a', index=False, header=False)
-        print(f"Data appended to {filename}")
-    else:
-        df.to_csv(filename, index=False)
-        print(f"Data saved to {filename}")
-
-
 # Run the scraper
 if __name__ == "__main__":
     articles = scrape_web_page(SI_URL, SUB_URLS)
     if articles:
-        append_csv(articles)
+        append_csv(articles, 'articles_scraped.csv')

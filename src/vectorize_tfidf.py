@@ -1,49 +1,61 @@
 import pandas as pd
+import numpy as np
+from gensim.models import Word2Vec
+from nltk.tokenize import word_tokenize
 from sklearn.feature_extraction.text import TfidfVectorizer
-from utils import adjust_pandas_display, load_csv
+from utils import adjust_pandas_display, load_csv, write_pkl
 
 
-def vectorize_with_tfidf(data_frame, text_column, max_features=5000):
-    """Tokenizes and vectorizes the text using TF-IDF, replacing the 'text' column with vectorized data.
+def vectorize_tfidf(data_frame, text_columns, max_features=5000):
+    """Tokenizes and vectorizes multiple text columns using TF-IDF, replacing their content with vectorized data.
 
     Parameters:
-        data_frame (pd.DataFrame): Input DataFrame containing the text column.
-        text_column (str): The name of the column with text to vectorize.
+        data_frame (pd.DataFrame): Input DataFrame containing the text columns.
+        text_columns (list of str): List of column names to vectorize.
         max_features (int): Maximum number of features for the TF-IDF matrix.
 
     Returns:
-        pd.DataFrame: The original DataFrame with the 'text' column replaced by vectorized TF-IDF data.
+        pd.DataFrame: The original DataFrame with specified columns replaced by vectorized TF-IDF data.
     """
     # Initialize TF-IDF Vectorizer
-    print("Vectorizing started...\n- TF-IDF vectorizer initialized;")
-    vectorizer = TfidfVectorizer(max_features=max_features)
+    print("\nVectorizing started...\n- TF-IDF vectorizer initialized;")
+    vectorizer_tfidf = TfidfVectorizer(max_features=max_features)
 
-    # Fit and transform the text column
-    print(f"- vectorizing {text_column} column;")
-    tfidf_matrix = vectorizer.fit_transform(data_frame[text_column])
+    for column in text_columns:
+        # Check if column exists in the DataFrame
+        if column not in data_frame.columns:
+            print(f"Warning: Column '{column}' not found in DataFrame. Skipping...")
+            continue
 
-    # Replace the 'text' column with the TF-IDF matrix
-    print(f"- replacing {text_column} column with vectors;")
-    data_frame['text'] = list(tfidf_matrix.toarray())
-    print("Vectorizing done.")
+        # Fit and transform the column
+        print(f"- vectorizing column: '{column}';")
+        tfidf_matrix = vectorizer_tfidf.fit_transform(data_frame[column].fillna(""))
 
+        # Replace the column with its vectorized representation
+        print(f"- replacing '{column}' column with vectors;")
+        data_frame[column] = list(tfidf_matrix.toarray())
+
+    print("Vectorization specified column completed.")
     return data_frame
 
 
-# Run vectorizing
+# Run TF-IDF vectorizer
 if __name__ == "__main__":
     try:
         # Adjust pandas display settings
-        adjust_pandas_display(max_rows=None, max_columns=None, width=1000)
+        adjust_pandas_display(max_rows=None, max_columns=None)
 
         # Load and preprocess dataset
-        df = load_csv("articles_preprocessed.csv")
+        df_loaded = load_csv("articles_preprocessed.csv")
 
         # Vectorize the text column
-        vectorized_df = vectorize_with_tfidf(df, text_column="text")
+        df_tfidf = vectorize_tfidf(df_loaded, ["text"])
+
+        # Write vectorized DataFrame to file
+        write_pkl(df_tfidf, "articles_vectorized_tfidf")
 
         # Display the vectorized DataFrame
-        print(f"\nVectorized DataFrame:\n{vectorized_df.head()}")
+        print(f"\nTF-IDF vectorized DataFrame:\n{df_tfidf.head()}")
 
     except Exception as e:
         print(f"An error occurred during vectorizing: {e}")

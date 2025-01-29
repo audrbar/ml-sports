@@ -38,15 +38,12 @@ def handle_values(data_frame, text_columns):
 
     # Reindex the DataFrame
     df_cleaned.reset_index(drop=True, inplace=True)
-    print("- DataFrame reindexed.")
-
-    # Display the cleaned DataFrame
-    print(f"- DataFrame cleaned:\n{df_cleaned}")
+    print("- DataFrame reindexed.\nHandling DataFrame values done.")
 
     return df_cleaned
 
 
-def add_category_column(data_frame, link_column='link', category_column='category', author_column='author'):
+def category_column(data_frame, link_column='link', category_column='category', author_column='author'):
     """Extracts categories from a link column, cleans the author column, and updates the DataFrame.
 
     Parameters:
@@ -104,10 +101,14 @@ def category_distribution(data_frame, target_column, min_count=5):
         print(f"\nNo classes with fewer than {min_count} samples found.")
         filtered_data = data_frame
 
+    initial_len = len(data_frame)
+    print(f"\n{len(filtered_data)} records remaining after filtering {initial_len - len(filtered_data)} "
+          f"rows with fewer than {min_count} samples in classes: {rare_classes}.")
+
     return filtered_data
 
 
-# Run the preprocessing
+# Run the values handling
 if __name__ == "__main__":
     # Adjust pandas display settings
     adjust_pandas_display(max_rows=None, max_columns=None, width=1000)
@@ -119,10 +120,10 @@ if __name__ == "__main__":
     df_clean = handle_values(df, ['title', 'intro', 'author', 'link'])
 
     # Update DataFrame with the new category column
-    df_category = add_category_column(df_clean)
+    df_category = category_column(df_clean)
 
     # Filter the DataFrame based on class distribution
-    df_distribution = category_distribution(df_category, target_column="category")
+    df_distribution = category_distribution(df_category, target_column="category", min_count=8)
 
     # Save to CSV
     write_csv(df_distribution, "articles_cleaned.csv")
