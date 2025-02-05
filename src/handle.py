@@ -1,6 +1,11 @@
 import re
+import os
 import pandas as pd
-from utils import adjust_pandas_display, load_csv, write_csv
+from utils import adjust_pandas_display, load_csv, write_csv, DATA_DIR
+
+# Define paths for storing data
+ARTICLES_SCRAPED_CSV = os.path.join(DATA_DIR, "articles_scraped.csv")
+ARTICLES_CLEANED_CSV = os.path.join(DATA_DIR, "articles_cleaned.csv")
 
 
 def handle_values(data_frame, text_columns):
@@ -14,6 +19,7 @@ def handle_values(data_frame, text_columns):
     Returns:
         pd.DataFrame: The cleaned and reindexed DataFrame.
     """
+
     # Check for missing values
     print("\nHandling DataFrame values:")
     missing_values = data_frame.isnull().sum()
@@ -43,14 +49,13 @@ def handle_values(data_frame, text_columns):
     return df_cleaned
 
 
-def category_column(data_frame, link_column='link', category_column='category', author_column='author'):
+def category_column(data_frame, link_column='url', category_column_='category'):
     """Extracts categories from a link column, cleans the author column, and updates the DataFrame.
 
     Parameters:
         data_frame (pd.DataFrame): The input DataFrame containing the link and author columns.
         link_column (str): The name of the column containing URLs. Default is 'link'.
-        category_column (str): The name of the new column to store categories. Default is 'category'.
-        author_column (str): The name of the column to clean (extract text before '|'). Default is 'author'.
+        category_column_ (str): The name of the new column to store categories. Default is 'category'.
 
     Returns:
         pd.DataFrame: The updated DataFrame with the new category column and cleaned author column,
@@ -63,13 +68,9 @@ def category_column(data_frame, link_column='link', category_column='category', 
         return match.group(1) if match else None
 
     # Apply the extraction function to the link column
-    data_frame[category_column] = data_frame[link_column].apply(extract_category)
+    data_frame[category_column_] = data_frame[link_column].apply(extract_category)
     # Drop the link column
     data_frame = data_frame.drop(columns=[link_column])
-
-    # Clean the author column to extract text before '|'
-    if author_column in data_frame.columns:
-        data_frame[author_column] = data_frame[author_column].str.split('|').str[0].str.strip()
 
     return data_frame
 
@@ -114,10 +115,10 @@ if __name__ == "__main__":
     adjust_pandas_display(max_rows=None, max_columns=None, width=1000)
 
     # Load a CSV file into a DataFrame
-    df = load_csv("articles_scraped.csv")
+    df = load_csv(ARTICLES_SCRAPED_CSV)
 
     # Handle missing values, remove duplicates, clean text columns and reindex
-    df_clean = handle_values(df, ['title', 'intro', 'author', 'link'])
+    df_clean = handle_values(df, ['url', 'title', 'content'])
 
     # Update DataFrame with the new category column
     df_category = category_column(df_clean)
@@ -126,4 +127,4 @@ if __name__ == "__main__":
     df_distribution = category_distribution(df_category, target_column="category", min_count=8)
 
     # Save to CSV
-    write_csv(df_distribution, "articles_cleaned.csv")
+    write_csv(df_distribution, ARTICLES_CLEANED_CSV)

@@ -1,16 +1,21 @@
 import re
+import os
 import string
 import nltk
 from bs4 import BeautifulSoup
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer, PorterStemmer
-from utils import adjust_pandas_display, load_csv, write_csv
+from utils import adjust_pandas_display, load_csv, write_csv, DATA_DIR
 
 # Download stopwords if not already present
 # nltk.download('stopwords')
 # nltk.download('punkt')
 # nltk.download('wordnet')
+
+# Define paths for storing data
+ARTICLES_CLEANED_CSV = os.path.join(DATA_DIR, "articles_cleaned.csv")
+ARTICLES_PREPROCESSED_CSV = os.path.join(DATA_DIR, "articles_preprocessed.csv")
 
 # Initialize lemmatizer and stemmer
 lemmatizer: WordNetLemmatizer = WordNetLemmatizer()
@@ -44,6 +49,9 @@ def normalize_text(text, lemmatize=True, stem=False):
 
     # Remove numbers
     text = re.sub(r'\d+', '', text)
+
+    # # Remove non-UTF-8 characters
+    # df['text'] = df['text'].apply(lambda x: x.encode('ascii', 'ignore').decode('utf-8'))
 
     # Tokenize the text
     tokens = word_tokenize(text)
@@ -105,9 +113,9 @@ if __name__ == "__main__":
         adjust_pandas_display(max_rows=None, max_columns=None, width=1000)
 
         # Load and preprocess dataset
-        df = load_csv("articles_cleaned.csv")
+        df = load_csv(ARTICLES_CLEANED_CSV)
         preprocessed_df = preprocess_dataset(
-            df, ['title', 'intro', 'author'], 'category', "articles_preprocessed.csv"
+            df, ['title', 'content'], 'category', ARTICLES_PREPROCESSED_CSV
         )
 
         # Display the preprocessed DataFrame

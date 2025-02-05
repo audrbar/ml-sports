@@ -5,6 +5,9 @@ import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
 
+# Read base source directory
+DATA_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../data"))
+
 
 def adjust_pandas_display(max_rows=None, max_columns=None, width=None):
     """Adjusts pandas display settings to control the number of rows, columns, and display width.
@@ -192,3 +195,33 @@ def split_data(data, text_column, label_column, test_size=0.2, val_size=0.2, ran
     print(f"y shape: {y.shape}, type: {type(y)}")
 
     return X_train, X_val, X_test, y_train, y_val, y_test
+
+
+def find_unique_values(first_file, second_file, output_file):
+    """Finds values in second.csv that are not present in first.csv and writes them to output file.
+
+    Parameters:
+        first_file (str): Path to the first CSV file.
+        second_file (str): Path to the second CSV file.
+        output_file (str): Path to save the unique values.
+    """
+    # Load first file
+    if os.path.exists(first_file):
+        df_first = pd.read_csv(first_file)
+    else:
+        print(f"Error: {first_file} not found.")
+        return
+
+    # Load second file
+    if os.path.exists(second_file):
+        df_second = pd.read_csv(second_file)
+    else:
+        print(f"Error: {second_file} not found.")
+        return
+
+    # Find rows in df_second that are not in df_first
+    df_unique = df_second[~df_second.apply(tuple, axis=1).isin(df_first.apply(tuple, axis=1))]
+
+    # Save unique values to third.csv
+    df_unique.to_csv(output_file, index=False)
+    print(f"Unique values written to {output_file}")
