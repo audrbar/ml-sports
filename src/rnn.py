@@ -1,15 +1,24 @@
+import os
 import numpy as np
 import pandas as pd
+import pickle
 import tensorflow as tf
+from sklearn.feature_extraction.text import TfidfVectorizer
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Dropout, LSTM, Embedding, Input
+from tensorflow.keras.layers import Dense, Dropout, LSTM, Embedding, Input, Bidirectional
 from tensorflow.keras.utils import to_categorical
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
-import pickle
+from imblearn.over_sampling import SMOTE
+from tensorflow.keras.callbacks import ReduceLROnPlateau
+from utils import DATA_DIR
+
+# Define paths for storing data
+ARTICLES_PREPROCESSED_CSV = os.path.join(DATA_DIR, "articles_preprocessed.csv")
+ARTICLES_VECTORIZED_WORD2VEC = os.path.join(DATA_DIR, "articles_vectorized_word2vec.pkl")
 
 
-def load_data(file_path):
+def load_data_pkl(file_path):
     """Loads vectorized text features and labels from a pickle file.
 
     Parameters:
@@ -18,10 +27,39 @@ def load_data(file_path):
     Returns:
         tuple: (X, y, label_encoder)
     """
-    df = pd.read_pickle(file_path)
+    df = pd.read_pickle(file_path).dropna()
 
     # Convert 'text' column (vectorized features) into a NumPy array
     X = np.array(df["text"].tolist(), dtype=np.float32)
+
+    # Convert labels to numerical format
+    label_encoder = LabelEncoder()
+    y = label_encoder.fit_transform(df["category"])
+    y = to_categorical(y)  # Convert labels to one-hot encoding
+
+    return X, y, label_encoder
+
+
+def load_data(file_path):
+    """Loads text features and labels from a csv file.
+
+    Parameters:
+        file_path (str): Path to the dataset.
+
+    Returns:
+        tuple: (X, y, label_encoder)
+    """
+    df = pd.read_csv(file_path).dropna()
+
+    # Remove non-UTF-8 characters
+    df['text'] = df['text'].apply(lambda x: x.encode('ascii', 'ignore').decode('utf-8'))
+
+    # Initialize TF-IDF vectorizer
+    vectorizer = TfidfVectorizer(max_features=5000)
+    X = vectorizer.fit_transform(df['text'])
+
+    # # Convert 'text' column (vectorized features) into a NumPy array
+    # X = np.array(df["text"].tolist(), dtype=np.float32)
 
     # Convert labels to numerical format
     label_encoder = LabelEncoder()
@@ -66,11 +104,11 @@ def build_rnn_model(input_dim, output_dim):
     Returns:
         tf.keras.Model: The compiled RNN model.
     """
+    # Add an embedding layer to the model
     model = Sequential([
         Input(shape=(input_dim, 1)),  # Reshaped for LSTM
         LSTM(128, return_sequences=True),  # First LSTM Layer
         LSTM(64),  # Second LSTM Layer
-        Dropout(0.3),
         Dense(128, activation='relu'),
         Dense(output_dim, activation='softmax')
     ])
@@ -79,7 +117,7 @@ def build_rnn_model(input_dim, output_dim):
     return model
 
 
-def train_model(model, X_train, y_train, X_val, y_val, epochs=20, batch_size=32):
+def train_model(model, X_train, y_train, X_val, y_val, epochs=50, batch_size=64):
     """Trains the RNN model.
 
     Parameters:
@@ -105,8 +143,7 @@ def train_model(model, X_train, y_train, X_val, y_val, epochs=20, batch_size=32)
 
 
 def evaluate_model(model, X_test, y_test):
-    """
-    Evaluates the trained model on the test dataset.
+    """Evaluates the trained model on the test dataset.
 
     Parameters:
         model (tf.keras.Model): The trained model.
@@ -154,23 +191,30 @@ def predict_category(model, text_vectorized, label_encoder):
 
 
 if __name__ == "__main__":
-    # Load vectorized dataset
-    X, y, label_encoder = load_data("articles_vectorized_ngram.pkl")
+    # # Load vectorized dataset
+    # X, y, label_encoder = load_data(ARTICLES_PREPROCESSED_CSV)
 
-    # Reshape X to fit LSTM layer (RNN requires 3D input: (samples, time steps, features))
-    X = X.reshape(X.shape[0], X.shape[1], 1)
+    # Load vectorized dataset
+    X, y, label_encoder = load_data_pkl(ARTICLES_VECTORIZED_WORD2VEC)
+
+    # # Reshape X to fit LSTM layer (RNN requires 3D input: (samples, time steps, features))
+    # X = X.reshape(X.shape[0], X.shape[1], 1)
 
     # Split into training, validation, and test sets
     X_train, X_val, X_test, y_train, y_val, y_test = split_data(X, y)
+
+    # # Balance classes using SMOTE (Synthetic Minority Oversampling)
+    # smote = SMOTE()
+    # X_train, y_train = smote.fit_resample(X_train, y_train)
 
     # Build RNN model
     rnn_model = build_rnn_model(input_dim=X_train.shape[1], output_dim=y_train.shape[1])
 
     # Train RNN model
-    train_model(rnn_model, X_train, y_train, X_val, y_val, epochs=20, batch_size=32)
+    train_model(rnn_model, X_train, y_train, X_val, y_val, epochs=100, batch_size=64)
 
     # Evaluate RNN model
     evaluate_model(rnn_model, X_test, y_test)
 
-    # Save the trained model & encoder
-    save_model_and_encoder(rnn_model, label_encoder)
+    # # Save the trained model & encoder
+    # save_model_and_encoder(rnn_model, label_encoder)

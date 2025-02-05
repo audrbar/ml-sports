@@ -1,9 +1,14 @@
+import os
 import pandas as pd
 import numpy as np
 from gensim.models import Word2Vec
 from nltk.tokenize import word_tokenize
 from sklearn.feature_extraction.text import TfidfVectorizer
-from utils import adjust_pandas_display, load_csv, write_pkl
+from utils import adjust_pandas_display, load_csv, write_pkl, DATA_DIR
+
+# Define paths for storing data
+ARTICLES_PREPROCESSED_CSV = os.path.join(DATA_DIR, "articles_preprocessed.csv")
+ARTICLES_VECTORIZED_TFIDF = os.path.join(DATA_DIR, "articles_vectorized_tfidf")
 
 
 def vectorize_tfidf(data_frame, text_columns, max_features=5000):
@@ -46,13 +51,13 @@ if __name__ == "__main__":
         adjust_pandas_display(max_rows=None, max_columns=None)
 
         # Load and preprocess dataset
-        df_loaded = load_csv("articles_preprocessed.csv")
+        df_loaded = load_csv(ARTICLES_PREPROCESSED_CSV)
 
         # Vectorize the text column
         df_tfidf = vectorize_tfidf(df_loaded, ["text"])
 
         # Write vectorized DataFrame to file
-        write_pkl(df_tfidf, "articles_vectorized_tfidf")
+        write_pkl(df_tfidf, ARTICLES_VECTORIZED_TFIDF)
 
         # Display the vectorized DataFrame
         print(f"\nTF-IDF vectorized DataFrame:\n{df_tfidf.head()}")

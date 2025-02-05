@@ -1,8 +1,13 @@
+import os
 import pandas as pd
 import numpy as np
 from gensim.models import Word2Vec
 from nltk.tokenize import word_tokenize
-from utils import adjust_pandas_display, load_csv, write_pkl
+from utils import adjust_pandas_display, load_csv, write_pkl, DATA_DIR
+
+# Define paths for storing data
+ARTICLES_PREPROCESSED_CSV = os.path.join(DATA_DIR, "articles_preprocessed.csv")
+ARTICLES_VECTORIZED_WORD2VEC = os.path.join(DATA_DIR, "articles_vectorized_word2vec")
 
 
 def vectorize_with_word2vec(data_frame, text_column, vector_size=100, min_count=1):
@@ -46,13 +51,13 @@ if __name__ == "__main__":
         adjust_pandas_display(max_rows=None, max_columns=None)
 
         # Load and preprocess dataset
-        df = load_csv("articles_preprocessed.csv")
+        df = load_csv(ARTICLES_PREPROCESSED_CSV)
 
         # Vectorize the text column
         df_word2vec = vectorize_with_word2vec(df, text_column="text")
 
         # Write vectorized DataFrame to file
-        write_pkl(df_word2vec, "articles_vectorized_word2vec")
+        write_pkl(df_word2vec, ARTICLES_VECTORIZED_WORD2VEC)
 
         # Display the vectorized DataFrame
         print(f"\nVectorized DataFrame:\n{df_word2vec.head()}")

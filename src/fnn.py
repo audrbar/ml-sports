@@ -1,3 +1,4 @@
+import os
 import pickle
 import numpy as np
 import pandas as pd
@@ -7,7 +8,10 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout, Input
 from tensorflow.keras.utils import to_categorical
 from sklearn.preprocessing import LabelEncoder
-from utils import adjust_pandas_display, load_pkl
+from utils import adjust_pandas_display, load_pkl, DATA_DIR
+
+# Define paths for storing data
+ARTICLES_VECTORIZED_TFIDF = os.path.join(DATA_DIR, "articles_vectorized_tfidf.pkl")
 
 
 def encode_labels(data_frame, features_column, labels_column):
@@ -143,7 +147,7 @@ if __name__ == "__main__":
     adjust_pandas_display(max_rows=None, max_columns=None)
 
     # Load and preprocess dataset
-    df = load_pkl("articles_vectorized_tfidf.pkl").dropna()
+    df = load_pkl(ARTICLES_VECTORIZED_TFIDF).dropna()
 
     # Encode features and labels
     X, y, label_encoder = encode_labels(df, features_column="text", labels_column="category")
@@ -155,7 +159,7 @@ if __name__ == "__main__":
     model = build_model(X_train.shape[1], y_train.shape[1])
 
     # Train the model
-    train_model(model, X_train, y_train, X_val, y_val, epochs=20, batch_size=32)
+    train_model(model, X_train, y_train, X_val, y_val, epochs=50, batch_size=64)
 
     # Evaluate the model
     evaluate_model(model, X_test, y_test)

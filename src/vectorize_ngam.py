@@ -1,6 +1,11 @@
+import os
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
-from utils import adjust_pandas_display, load_csv, write_pkl
+from utils import adjust_pandas_display, load_csv, write_pkl, DATA_DIR
+
+# Define paths for storing data
+ARTICLES_PREPROCESSED_CSV = os.path.join(DATA_DIR, "articles_preprocessed.csv")
+ARTICLES_VECTORIZED_NGRAM = os.path.join(DATA_DIR, "articles_vectorized_ngram")
 
 
 def vectorize_ngrams(data_frame, text_column, ngram_range=(1, 2), max_features=5000):
@@ -38,7 +43,7 @@ if __name__ == "__main__":
         adjust_pandas_display(max_rows=None, max_columns=None)
 
         # Load and preprocess dataset
-        df = load_csv("articles_preprocessed.csv")
+        df = load_csv(ARTICLES_PREPROCESSED_CSV)
 
         # Vectorize the text column using n-grams
         vectorized_df, vectorizer = vectorize_ngrams(
@@ -49,7 +54,7 @@ if __name__ == "__main__":
         )
 
         # Write vectorized DataFrame to file
-        write_pkl(vectorized_df, "articles_vectorized_ngram")
+        write_pkl(vectorized_df, ARTICLES_VECTORIZED_NGRAM)
 
         # Display the updated DataFrame
         print(f"\nDataFrame with N-Gram Vectors in 'text' Column:\n{vectorized_df.head()}")
