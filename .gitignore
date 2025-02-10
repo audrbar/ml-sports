@@ -172,6 +172,7 @@ DS_Store/
 data/
 docs/
 logs/
+models/
 
 # PyPI configuration file
 .pypirc
