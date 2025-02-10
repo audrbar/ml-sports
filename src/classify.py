@@ -10,7 +10,7 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import accuracy_score, confusion_matrix, precision_score, recall_score, f1_score
-from utils import adjust_pandas_display, DATA_DIR
+from utils import adjust_pandas_display, split_data_to_two, DATA_DIR
 
 # Define paths for storing data
 DATA_FILES = {
@@ -21,41 +21,31 @@ DATA_FILES = {
 }
 
 
-def load_data(file_path):
+def load_data(_file_path):
     """Loads vectorized text features and labels from a pickle file."""
     try:
-        df = pd.read_pickle(file_path).dropna()
+        df = pd.read_pickle(_file_path).dropna()
+        print(f"File '{_file_path}' loaded, data frame created: {df.shape}")
         if not {"text", "category"}.issubset(df.columns):
             raise ValueError("Missing required columns: 'text' and 'category'")
 
-        X = np.array(df["text"].tolist(), dtype=np.float32)
-        y = LabelEncoder().fit_transform(df["category"])
-        return X, y
+        _X = np.array(df["text"].tolist(), dtype=np.float32)
+        _y = LabelEncoder().fit_transform(df["category"])
+        return _X, _y
     except Exception as e:
         print(f"Error loading data: {e}")
         return None, None
 
 
-def split_data(X, y, test_size=0.2, val_size=0.2, random_state=42):
-    """Splits the dataset into training, validation, and test sets."""
-    X_train_val, X_test, y_train_val, y_test = train_test_split(
-        X, y, test_size=test_size, random_state=random_state, stratify=y
-    )
-    X_train, X_val, y_train, y_val = train_test_split(
-        X_train_val, y_train_val, test_size=val_size, random_state=random_state, stratify=y_train_val
-    )
-    return X_train, X_val, X_test, y_train, y_val, y_test
-
-
-def evaluate_classifier(model, X_train, X_test, y_train, y_test):
+def evaluate_classifier(model, _X_train, _X_test, _y_train, _y_test):
     """Trains and evaluates a classifier and returns performance metrics."""
-    model.fit(X_train, y_train)
-    y_predict = model.predict(X_test)
+    model.fit(_X_train, _y_train)
+    y_predict = model.predict(_X_test)
 
-    accuracy = accuracy_score(y_test, y_predict)
-    precision = precision_score(y_test, y_predict, average='macro', zero_division=0)
-    recall = recall_score(y_test, y_predict, average='macro', zero_division=0)
-    f1 = f1_score(y_test, y_predict, average='macro', zero_division=0)
+    accuracy = accuracy_score(_y_test, y_predict)
+    precision = precision_score(_y_test, y_predict, average='macro', zero_division=0)
+    recall = recall_score(_y_test, y_predict, average='macro', zero_division=0)
+    f1 = f1_score(_y_test, y_predict, average='macro', zero_division=0)
 
     return {
         'Classifier': model.__class__.__name__,
@@ -66,17 +56,17 @@ def evaluate_classifier(model, X_train, X_test, y_train, y_test):
     }
 
 
-def evaluate_classifiers(classifiers, X_train, X_test, y_train, y_test):
+def evaluate_classifiers(classifiers, _X_train, _X_test, _y_train, _y_test):
     """Evaluates a list of classifiers and returns their performance metrics."""
-    results = [evaluate_classifier(clf, X_train, X_test, y_train, y_test) for clf in classifiers]
-    return pd.DataFrame(results).set_index('Classifier')
+    _results = [evaluate_classifier(clf, _X_train, _X_test, _y_train, _y_test) for clf in classifiers]
+    return pd.DataFrame(_results).set_index('Classifier')
 
 
-def plot_metrics(metrics_df):
+def plot_metrics(_metrics_df):
     """Plots performance metrics for classifiers."""
     plt.figure(figsize=(10, 6))
     for column in ['Accuracy', 'Precision', 'Recall', 'F1 Score']:
-        plt.plot(metrics_df.index, metrics_df[column], marker='o', linestyle='-', label=column)
+        plt.plot(_metrics_df.index, _metrics_df[column], marker='o', linestyle='-', label=column)
 
     plt.title("Classifiers Performance Metrics")
     plt.xlabel("Classifier")
@@ -88,9 +78,9 @@ def plot_metrics(metrics_df):
     plt.show()
 
 
-def plot_metrics_all(metrics_df):
+def plot_metrics_all(_metrics_df):
     """Plots performance metrics for classifiers."""
-    metrics_df.plot(kind='bar', figsize=(12, 7))
+    _metrics_df.plot(kind='bar', figsize=(12, 7))
     plt.title("Classifiers Performance Metrics")
     plt.ylabel("Score")
     plt.legend(title="Metrics")
@@ -115,7 +105,7 @@ if __name__ == "__main__":
         if X is None or y is None:
             continue
 
-        X_train, X_val, X_test, y_train, y_val, y_test = split_data(X, y)
+        X_train, X_test, y_train, y_test = split_data_to_two(X, y)
         metrics_df = evaluate_classifiers(classifiers_to_evaluate, X_train, X_test, y_train, y_test)
         results[dataset_key] = metrics_df
 
@@ -128,3 +118,9 @@ if __name__ == "__main__":
         print(f"\nDataset: {dataset_key}")
         print(metrics_df)
         plot_metrics_all(metrics_df)
+
+# Dataset: TF-IDF
+#                         Accuracy  Precision    Recall  F1 Score
+# Classifier
+# LogisticRegression      0.957447   0.967682  0.960829  0.963182
+# KNeighborsClassifier    0.952128   0.963819  0.958212  0.960347

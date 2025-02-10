@@ -4,12 +4,11 @@ import numpy as np
 import pandas as pd
 import tensorflow as tf
 import matplotlib.pyplot as plt
-from sklearn.model_selection import train_test_split
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout, Input
 from tensorflow.keras.utils import to_categorical
 from sklearn.preprocessing import LabelEncoder
-from utils import adjust_pandas_display, load_pkl, DATA_DIR, MODELS_DIR
+from utils import adjust_pandas_display, load_pkl, split_data_to_three, DATA_DIR, MODELS_DIR
 
 # Define paths for storing data
 DATA_FILES = {
@@ -29,18 +28,6 @@ def encode_labels(df, features_col, labels_col):
     y = to_categorical(label_encoder.fit_transform(df[labels_col]))
     print(f"Data Shape - Features: {X.shape}, Labels: {y.shape}")
     return X, y, label_encoder
-
-
-def split_data(X, y, test_size=0.2, val_size=0.2, random_state=42):
-    """Splits data into training, validation, and test sets."""
-    X_train_val, X_test, y_train_val, y_test = train_test_split(
-        X, y, test_size=test_size, random_state=random_state
-    )
-    X_train, X_val, y_train, y_val = train_test_split(
-        X_train_val, y_train_val, test_size=val_size, random_state=random_state
-    )
-    print(f"Train: {X_train.shape[0]}, Val: {X_val.shape[0]}, Test: {X_test.shape[0]}")
-    return X_train, X_val, X_test, y_train, y_val, y_test
 
 
 def build_model(input_dim, output_dim, neurons=[512, 256], dropout_rates=[0.3, 0.3]):
@@ -131,10 +118,14 @@ if __name__ == "__main__":
     adjust_pandas_display(max_rows=None, max_columns=None)
     df = load_pkl(DATA_FILES["tfidf"]).dropna()
     X, y, label_encoder = encode_labels(df, features_col="text", labels_col="category")
-    X_train, X_val, X_test, y_train, y_val, y_test = split_data(X, y)
+    X_train, X_val, X_test, y_train, y_val, y_test = split_data_to_three(X, y)
     best_params = hyperparameter_tuning(X_train, y_train, X_val, y_val)
     model = build_model(X_train.shape[1], y_train.shape[1], neurons=best_params['neurons'],
                         dropout_rates=best_params['dropout_rates'])
     train_model(model, X_train, y_train, X_val, y_val, epochs=50, batch_size=best_params['batch_size'])
     evaluate_model(model, X_test, y_test)
     save_model_and_encoder(model, label_encoder, SNN_MODEL, SNN_ENCODER)
+
+# Best Hyperparameter Configuration:
+# {'neurons': [512, 256], 'dropout_rates': [0.3, 0.3], 'batch_size': 32, 'val_accuracy': 0.9867549538612366}
+# Test Accuracy: 0.9787

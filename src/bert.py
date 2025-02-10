@@ -12,7 +12,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 from transformers import (DistilBertTokenizer, DistilBertModel, Trainer, TrainingArguments,
                           AutoModelForSequenceClassification)
-from src.utils import adjust_pandas_display, load_csv, DATA_DIR
+from src.utils import adjust_pandas_display, load_csv, split_data_to_three, DATA_DIR
 
 # Define paths for storing data
 ARTICLES_PREPROCESSED_CSV = os.path.join(DATA_DIR, "articles_preprocessed.csv")
@@ -37,14 +37,6 @@ def load_data(file_path):
     label_encoder = LabelEncoder()
     y = label_encoder.fit_transform(df["category"])
     return X, y, label_encoder
-
-
-def split_data(X, y, test_size=0.2, val_size=0.2, random_state=42):
-    """Splits dataset into training, validation, and test sets."""
-    X_train_val, X_test, y_train_val, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
-    X_train, X_val, y_train, y_val = train_test_split(X_train_val, y_train_val, test_size=val_size,
-                                                      random_state=random_state)
-    return X_train, X_val, X_test, y_train, y_val, y_test
 
 
 def tokenize_function(examples, max_length):
@@ -121,7 +113,7 @@ def train_and_evaluate(X_train, X_val, X_test, y_train, y_val, y_test, max_lengt
 if __name__ == "__main__":
     adjust_pandas_display(max_rows=None, max_columns=None)
     X, y, label_encoder = load_data(ARTICLES_PREPROCESSED_CSV)
-    X_train, X_val, X_test, y_train, y_val, y_test = split_data(X, y)
+    X_train, X_val, X_test, y_train, y_val, y_test = split_data_to_three(X, y)
 
     results_df = pd.DataFrame(columns=["max_length", "dropout", "accuracy"])
 
