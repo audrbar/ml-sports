@@ -35,7 +35,7 @@ def append_csv(data, filename: str):
 def load_csv(filename):
     """Loads CSV into DataFrame."""
     try:
-        return pd.read_csv(filename)
+        return pd.read_csv(filename, delimiter=',', on_bad_lines='skip')
     except FileNotFoundError:
         print(f"File {filename} not found.")
         return None
