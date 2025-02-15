@@ -89,8 +89,8 @@ def plot_confusion_matrix(conf_matrix, dataset_name):
 def plot_metrics_comparison(_results):
     """Plots comparison of test metrics across datasets."""
     df_results = pd.DataFrame(_results, index=["Accuracy", "Precision", "Recall", "F1 Score"])
-    df_results.plot(kind='bar', figsize=(12, 8))
-    plt.title("Model Performance Across Different Vectorization Methods")
+    df_results.plot(kind='bar', figsize=(12, 7))
+    plt.title("KNeighborsClassifier Performance Across Different Vectorization Methods")
     plt.ylabel("Score")
     plt.legend(title="Dataset")
     plt.grid(True)

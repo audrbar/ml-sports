@@ -81,7 +81,7 @@ def plot_metrics(_metrics_df):
 def plot_metrics_all(_metrics_df):
     """Plots performance metrics for classifiers."""
     _metrics_df.plot(kind='bar', figsize=(12, 7))
-    plt.title("Classifiers Performance Metrics")
+    plt.title("Traditional Classifiers Performance Metrics")
     plt.ylabel("Score")
     plt.legend(title="Metrics")
     plt.grid(True)
