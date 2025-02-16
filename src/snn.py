@@ -78,7 +78,7 @@ def plot_hyperparameter_tuning(results_df):
         plt.plot(idx, row['val_accuracy'], marker='o', linestyle='-', label=label)
     plt.xlabel("Hyperparameter Configurations")
     plt.ylabel("Validation Accuracy")
-    plt.title("Hyperparameter Tuning Results")
+    plt.title("Tensorflow Keras Sequential Model Hyperparameter Tuning Results")
     plt.legend(loc="best", fontsize="small")
     plt.grid(True)
     plt.show()
@@ -90,7 +90,7 @@ def hyperparameter_tuning(X_train, y_train, X_val, y_val):
     neurons_list = [[512, 256], [1024, 512], [256, 128]]
     dropout_rates_list = [[0.3, 0.3], [0.5, 0.5], [0.2, 0.2]]
     batch_sizes = [32, 64]
-    epochs = 50
+    epochs = 100
 
     for neurons in neurons_list:
         for dropout_rates in dropout_rates_list:
@@ -106,10 +106,10 @@ def hyperparameter_tuning(X_train, y_train, X_val, y_val):
                     'val_accuracy': val_acc
                 })
     results_df = pd.DataFrame(tuning_results)
-    print(f"Hyperparameter tuning results:\n{results_df}")
+    print(f"Tensorflow Keras Sequential Model Hyperparameter Tuning Results:\n{results_df}")
     plot_hyperparameter_tuning(results_df)
     best_row = results_df.loc[results_df['val_accuracy'].idxmax()]
-    print(f"Best Hyperparameter Configuration:\n{best_row.to_dict()}")
+    print(f"Best Tensorflow Keras Sequential Model Hyperparameter Configuration:\n{best_row.to_dict()}")
     return {'neurons': best_row['neurons'], 'dropout_rates': best_row['dropout_rates'],
             'batch_size': best_row['batch_size']}
 
@@ -122,6 +122,7 @@ if __name__ == "__main__":
     best_params = hyperparameter_tuning(X_train, y_train, X_val, y_val)
     model = build_model(X_train.shape[1], y_train.shape[1], neurons=best_params['neurons'],
                         dropout_rates=best_params['dropout_rates'])
+    print(model.summary())
     train_model(model, X_train, y_train, X_val, y_val, epochs=50, batch_size=best_params['batch_size'])
     evaluate_model(model, X_test, y_test)
     save_model_and_encoder(model, label_encoder, SNN_MODEL, SNN_ENCODER)

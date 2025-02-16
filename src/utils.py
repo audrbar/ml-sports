@@ -72,7 +72,27 @@ def split_data_to_two(X, y, test_size=0.2, random_state=42):
     return X_train, X_test, y_train, y_test
 
 
-def split_data_to_three(X, y, test_size=0.2, val_size=0.2, random_state=42):
+def split_data_to_three(X, y, test_size=0.2, val_size=0.1, random_state=42):
+    """Splits data into train, validation, and test sets."""
+    # First split: train+validation and test
+    X_train_val, X_test, y_train_val, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
+
+    # Second split: train and validation
+    val_ratio = val_size / (1 - test_size)  # Adjust validation size after first split
+    X_train, X_val, y_train, y_val = train_test_split(X_train_val, y_train_val, test_size=val_ratio,
+                                                      random_state=random_state)
+
+    # Convert lists to NumPy arrays
+    X_train, X_val, X_test = map(np.array, [X_train, X_val, X_test])
+    y_train, y_val, y_test = map(np.array, [y_train, y_val, y_test])
+
+    # Print correct shapes
+    print(f"Train: {X_train.shape[0]}, Val: {X_val.shape[0]}, Test: {X_test.shape[0]}")
+
+    return X_train, X_val, X_test, y_train, y_val, y_test
+
+
+def split_data_to_three_(X, y, test_size=0.2, val_size=0.2, random_state=42):
     """Splits data into training, validation, and test sets."""
     X_train_val, X_test, y_train_val, y_test = train_test_split(
         X, y, test_size=test_size, random_state=random_state

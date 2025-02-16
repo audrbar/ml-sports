@@ -90,7 +90,7 @@ def plot_metrics_comparison(_results):
     """Plots comparison of test metrics across datasets."""
     df_results = pd.DataFrame(_results, index=["Accuracy", "Precision", "Recall", "F1 Score"])
     df_results.plot(kind='bar', figsize=(12, 7))
-    plt.title("KNeighborsClassifier Performance Across Different Vectorization Methods")
+    plt.title("KNeighbors Classifier Performance Across Different Vectorization Methods")
     plt.ylabel("Score")
     plt.legend(title="Dataset")
     plt.grid(True)
@@ -114,6 +114,6 @@ if __name__ == "__main__":
         test_scores = evaluate_model(grid_search.best_estimator_, X_test, y_test, dataset_name=dataset_key)
         results[dataset_key] = test_scores
 
-    print("\nFinal Model Performance Comparison:")
+    print("\nFinal KNeighbors Classifier Performance Comparison Across Different Vectorization Methods:")
     print(pd.DataFrame(results, index=["Accuracy", "Precision", "Recall", "F1 Score"]))
     plot_metrics_comparison(results)

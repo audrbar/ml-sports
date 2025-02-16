@@ -68,7 +68,7 @@ def plot_metrics(_metrics_df):
     for column in ['Accuracy', 'Precision', 'Recall', 'F1 Score']:
         plt.plot(_metrics_df.index, _metrics_df[column], marker='o', linestyle='-', label=column)
 
-    plt.title("Classifiers Performance Metrics")
+    plt.title("Traditional Classifiers Performance Metrics Comparison")
     plt.xlabel("Classifier")
     plt.ylabel("Metric Value")
     plt.ylim(0.2, 1.0)
@@ -81,7 +81,7 @@ def plot_metrics(_metrics_df):
 def plot_metrics_all(_metrics_df):
     """Plots performance metrics for classifiers."""
     _metrics_df.plot(kind='bar', figsize=(12, 7))
-    plt.title("Traditional Classifiers Performance Metrics")
+    plt.title("Traditional Classifiers Performance Metrics Comparison")
     plt.ylabel("Score")
     plt.legend(title="Metrics")
     plt.grid(True)
