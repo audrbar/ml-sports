@@ -73,6 +73,7 @@ if __name__ == "__main__":
     with open(RNN_ENCODER, "wb") as f:
         pickle.dump(label_encoder, f)
     model.save(RNN_MODEL)
+    print(model.summary())
     print("Model and encoder saved.")
 
 # Best model: FastText with accuracy: 0.4438
