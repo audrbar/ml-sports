@@ -87,17 +87,17 @@ Pre-trained **transformer models** have revolutionized NLP, offering state-of-th
 A particular classification algorithm outperforms others on particular dataset depending on dataset's structure, shape, 
 density and noise. Selected Classifiers to evaluate in the project:
 
-| Traditional Classifiers    | Deep Learning-Based Classifiers (NN's)      | Pre-Trained Transformer |
-|----------------------------|---------------------------------------------|-------------------------|
-| Logistic Regression        | Sequential Recurrent Neural Networks (RNNs) | DistilBERT              |
-| Random Forest              | Long Short-Term Memory (LSTM)               |                         |
-| Decision Tree              |                                             |                         |
-| k-Nearest Neighbors (k-NN) |                                             |                         |
+| Traditional Classifiers    | Deep Learning-Based Classifiers (NN's)    | Pre-Trained Transformer |
+|----------------------------|-------------------------------------------|-------------------------|
+| Logistic Regression        | Simple Neural Network (SNN)               | DistilBERT              |
+| Random Forest              | Sequential Recurrent Neural Network (RNN) |                         |
+| Decision Tree              |                                           |                         |
+| k-Nearest Neighbors (k-NN) |                                           |                         |
 
 ## Traditional Classifiers
-![Data Correlation Plot](./img/traditional_img.png)
+![Data Plot](./img/traditional_img.png)
 #### Traditional Classifiers Performance evaluation metrics:
-![Data Correlation Plot](./img/traditional_table.png)
+![Data Plot](./img/traditional_table.png)
 #### KNeighbors Classifier fine-tuning GridSearchCV params:
 - `metric` euclidean, manhattan, minkowski;
 - `n_neighbors` 3, 5, 7, 10;
@@ -110,10 +110,10 @@ density and noise. Selected Classifiers to evaluate in the project:
 | N-Gram   |  euclidean |          10 |    distance |                         0.8888 |
 | FastText |  euclidean |           7 |    distance |                         0.8515 |
 #### KNeighbors Classifier Performance Comparison Across Different Vectorization Methods:
-![Data Correlation Plot](./img/knn_performance.png)
-![Data Correlation Plot](./img/knn_table.png)
+![Data Plot](./img/knn_performance.png)
+![Data Plot](./img/knn_table.png)
 #### KNeighbors Classifier Confusion Matrix on N-Gram Vectorization:
-![Data Correlation Plot](./img/knn_matrix.png)
+![Data Plot](./img/knn_matrix.png)
 ### Logistic Regression Classifier fine-tuning GridSearchCV params:
 - `threshold` 0.01, 0.1, 1, 10;
 - `solver` lbfgs, liblinear, saga;
@@ -126,44 +126,64 @@ density and noise. Selected Classifiers to evaluate in the project:
 | N-Gram   |        10 |      100 |   saga |    0.9255 |
 | FastText |        10 |      200 |  lbfgs |    0.8706 |
 #### Logistic Regression Classifier Best Params Across Different Vectorization Methods:
-![Data Correlation Plot](./img/lr_performance.png)
-![Data Correlation Plot](./img/lr_table.png)
+![Data Plot](./img/lr_performance.png)
+![Data Plot](./img/lr_table.png)
 #### Logistic Regression Classifier Confusion Matrix on TF-IDF Vectorization:
-![Data Correlation Plot](./img/lr_matrix.png)
+![Data Plot](./img/lr_matrix.png)
 ## Neural Network Models
-### Tensorflow Keras Sequential Model (SNN)
-It is a simple (basic) neural network model. Input layer accepts vectorized text. Hidden layers fully connected with activation functions (e.g., ReLU). Output 
-layer softmax for multi-class classification.
-![Data Correlation Plot](./img/snn_model.png)
+### Simple Neural Network (SNN) - Tensorflow Keras Sequential Model
+It is a simple (basic) fead-forward neural network model. Input layer accepts vectorized text. Hidden layers fully 
+connected with activation functions (e.g., ReLU). Output layer softmax for multi-class classification.
+![Data Plot](./img/snn_model.png)
 #### Data Shape used for SNN tuning:
-![Data Correlation Plot](./img/snn_data_shape.png)
+![Data Plot](./img/snn_data_shape.png)
 #### Hyperparameters used for tuning:
 - `neurons_list` [512, 256], [1024, 512], [256, 128];
 - `dropout_rates_list` [0.3, 0.3], [0.5, 0.5], [0.2, 0.2];
 - `batch_sizes` 32, 64;
 - `epochs` 100.
-![Data Correlation Plot](./img/snn_tuning_results.png)
-![Data Correlation Plot](./img/snn_best_params.png)
-![Data Correlation Plot](./img/snn_test_accuracy.png)
-### Recurrent Neural Network (RNN) or Transformer
+![Data Plot](./img/snn_tuning_results.png)
+![Data Plot](./img/snn_best_params.png)
+![Data Plot](./img/snn_test_accuracy.png)
+### Recurrent Neural Network (RNN) - Long Short-Term Memory (LSTM)
 RNN variants are LSTM or GRU designed for handling sequential text data. 
-![Data Correlation Plot](./img/rnn_model.png)
+![Data Plot](./img/rnn_model.png)
 #### FastText dataset results
-![Data Correlation Plot](./img/rnn_best_model.png)
+![Data Plot](./img/rnn_best_model.png)
 ### Transformer-based models use BERT, RoBERTa, or similar pre-trained models.
-Distil BertModel from pretrained distilbert-base-uncased model Leverages advanced deep learning techniques 
+Distil Bert Model from pretrained distilbert-base-uncased model Leverages advanced deep learning techniques 
 for better performance.
-![Data Correlation Plot](./img/bert_dataset.png)
-![Data Correlation Plot](./img/bert_results.png)
+![Data Plot](./img/bert_dataset.png)
+![Data Plot](./img/bert_results.png)
 ## Performance Comparison
-Compare the performance of the ML classifier, simple NN and advanced NN with metrics confusion matrix, precision, 
-recall, and F1-score.
+While deep learning models like DistilBERT offer contextual understanding, traditional ML models (Logistic Regression) 
+with TF-IDF delivered similar accuracy with significantly lower computational cost. This suggests that for structured 
+text datasets, feature engineering remains a powerful tool and deep learning models should be carefully fine-tuned 
+to justify their resource requirements.
+
+| Classifier                              |          Vectorizer | Model Size | Accuracy |
+|-----------------------------------------|--------------------:|-----------:|---------:|
+| Logistic Regression                     |              TF-IDF |       8 KB |   0.9412 |
+| k-Nearest Neighbors                     |              N-Gram |     416 KB |   0.9059 |
+| Tensorflow Keras Sequential Model (SNN) |              TF-IDF |    32,4 MB |   0.9412 |
+| Distil Bert Base Uncased Model (RNN)    | DistilBertTokenizer |   267,6 MB |   0.8745 |
+# 🏆 Models Winners in Classifying Articles are Logistic Regression and Tensorflow Keras Sequential Model (SNN)
 ## Conclusions
-Summarize: Key findings from the project. Challenges faced and how they were addressed.
-Future Scope: Potential improvements (e.g., using more data, fine-tuning models, or adding categories).
-## 🏆 Models Winners in Classifying Articles
-Since article classification is an NLP (Natural Language Processing) task, you need a model specialized in:
-- **Text Classification**
-- **Topic Categorization**
-- **Context Understanding**
-- **Multi-Class Classification**
+This project aimed to classify text data using various machine learning and deep learning models, leveraging different 
+vectorization techniques. We evaluated models ranging from traditional ML classifiers (Logistic Regression, k-NN) 
+to deep learning architectures (SNN and RNN-based DistilBERT). The key finding was that Logistic Regression with 
+TF-IDF and SNN with TF-IDF performed best, both achieving 94.12% accuracy, demonstrating that traditional models 
+can be competitive with deep learning when using appropriate feature engineering. However, DistilBERT (RNN) showed 
+lower accuracy (87.45%), suggesting that fine-tuning on this dataset might improve performance.
+#### Challenges and Solutions
+- `Data Imbalance`: Some categories had fewer samples, affecting training balance. This was addressed by applying 
+category filtering and sampling to ensure a more uniform class distribution.
+- `Model Convergence Issues`: The lbfgs solver in Logistic Regression faced convergence warnings, which were mitigated 
+by scaling data and increasing max iterations.
+- `Computational Constraints`: Deep learning models, particularly DistilBERT, had large model sizes (267.6 MB) 
+and longer inference times. Optimizations such as reducing sequence length and batch size helped improve efficiency.
+- `Deprecation Warnings in Pandas`: Deprecated behavior in groupby().apply() was updated using group_keys=False 
+and include_groups=False.
+#### Future Scope
+Potential improvements (e.g., using more data, fine-tuning models, or adding categories).
+

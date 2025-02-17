@@ -172,7 +172,7 @@ DS_Store/
 data/
 docs/
 logs/
-models/
+models_large/
 
 # PyPI configuration file
 .pypirc
