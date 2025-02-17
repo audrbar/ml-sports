@@ -9,7 +9,7 @@ for text classification.
 Utility functions are used throughout the project to adjust pandas display settings, write data to CSV files, 
 binary data - to pickle files, load the data from these files, split the datasets into training and test sets, 
 also into training, validation and test sets, find and save unique values.
-### Data used
+### Data Analyzed
 A sports articles dataset is used for the project setting, sourced from Sports Illustrated, each labeled with 
 their respective categories (e.g., basketball, soccer, football). Articles are scraped using the Python libraries 
 `requests` and `BeautifulSoup`, extracting relevant text (title, content) and metadata (category). The structured 
@@ -18,13 +18,13 @@ dataset is saved in CSV format, containing:
 - `category`: the predefined category assigned to the article.
 > :memo: **Info:** 2400 articles where scraped and saved for processing.
 
-The main dataset / project features, witch are important for the classifiers choosing, are:\
-`General text classification` `Small dataset` `Predefined labels` `Multi-class classification` 
+The main dataset / project features, witch are important for the classifiers picking, are:\
+`General text classification` `Predefined labels` `Small dataset` `Multi-class classification` 
 `Structured text features` `Low compute`
 ### Data Preprocessing
-The scraped data are prepared for model training in three main steps:
-- a missing values are handled, duplicates removed, text columns cleaned, category column extracted, 
-categories distribution balanced with `Pandas` library;
+The scraped data are prepared for models training in four main steps:
+- a missing values are handled, duplicates removed, category column extracted, categories distribution balanced 
+with `Pandas` library;
 - the text is cleaned with `Natural Language Toolkit (NLTK)` (removes HTML tags, punctuation, stopwords, etc.);
 - the text is normalized with `NLTK's WordNetLemmatizer` (converts to lowercase, lemmatize (converts words to their 
 base form) and `NLTK's PorterStemmer` (stemming reduces words to their root form);
@@ -83,7 +83,7 @@ Pre-trained **transformer models** have revolutionized NLP, offering state-of-th
 **Best For:** **Large datasets & complex classification tasks**  
 **Libraries:** `transformers`, `PyTorch`, `TensorFlow`
 
-### 🏆Selected Classifiers
+###  🏆 Selected Classifiers
 A particular classification algorithm outperforms others on particular dataset depending on dataset's structure, shape, 
 density and noise. Selected Classifiers to evaluate in the project:
 
@@ -94,7 +94,7 @@ density and noise. Selected Classifiers to evaluate in the project:
 | Decision Tree              |                                           |                         |
 | k-Nearest Neighbors (k-NN) |                                           |                         |
 
-## Traditional Classifiers
+## Traditional Classifiers Comparison
 ![Data Plot](./img/traditional_img.png)
 #### Traditional Classifiers Performance evaluation metrics:
 ![Data Plot](./img/traditional_table.png)
@@ -155,7 +155,8 @@ Distil Bert Model from pretrained distilbert-base-uncased model Leverages advanc
 for better performance.
 ![Data Plot](./img/bert_dataset.png)
 ![Data Plot](./img/bert_results.png)
-## Performance Comparison
+## 🏆 Models Winners in Classifying Articles
+### Models Winners in Classifying Articles are _Logistic Regression_ and _Simple Neural Network (SNN)_.
 While deep learning models like DistilBERT offer contextual understanding, traditional ML models (Logistic Regression) 
 with TF-IDF delivered similar accuracy with significantly lower computational cost. This suggests that for structured 
 text datasets, feature engineering remains a powerful tool and deep learning models should be carefully fine-tuned 
@@ -167,7 +168,7 @@ to justify their resource requirements.
 | k-Nearest Neighbors                     |              N-Gram |     416 KB |   0.9059 |
 | Tensorflow Keras Sequential Model (SNN) |              TF-IDF |    32,4 MB |   0.9412 |
 | Distil Bert Base Uncased Model (RNN)    | DistilBertTokenizer |   267,6 MB |   0.8745 |
-# 🏆 Models Winners in Classifying Articles are Logistic Regression and Tensorflow Keras Sequential Model (SNN)
+Find Trained Models Winners in `/models` catalog.
 ## Conclusions
 This project aimed to classify text data using various machine learning and deep learning models, leveraging different 
 vectorization techniques. We evaluated models ranging from traditional ML classifiers (Logistic Regression, k-NN) 
@@ -175,15 +176,51 @@ to deep learning architectures (SNN and RNN-based DistilBERT). The key finding w
 TF-IDF and SNN with TF-IDF performed best, both achieving 94.12% accuracy, demonstrating that traditional models 
 can be competitive with deep learning when using appropriate feature engineering. However, DistilBERT (RNN) showed 
 lower accuracy (87.45%), suggesting that fine-tuning on this dataset might improve performance.
-#### Challenges and Solutions
-- `Data Imbalance`: Some categories had fewer samples, affecting training balance. This was addressed by applying 
-category filtering and sampling to ensure a more uniform class distribution.
-- `Model Convergence Issues`: The lbfgs solver in Logistic Regression faced convergence warnings, which were mitigated 
-by scaling data and increasing max iterations.
-- `Computational Constraints`: Deep learning models, particularly DistilBERT, had large model sizes (267.6 MB) 
-and longer inference times. Optimizations such as reducing sequence length and batch size helped improve efficiency.
-- `Deprecation Warnings in Pandas`: Deprecated behavior in groupby().apply() was updated using group_keys=False 
-and include_groups=False.
-#### Future Scope
-Potential improvements (e.g., using more data, fine-tuning models, or adding categories).
-
+## Usage
+1. Clone the Repository
+    ```
+    git clone https://github.com/audrbar/ml-sports.git
+    cd ml-sports
+    ```
+2. Create and Activate a Virtual Environment
+    ```
+    python3 -m venv venv
+    source venv/bin/activate
+    ```
+    On Windows use
+    ```
+    venv\Scripts\activate
+    ```
+3. Install Dependencies
+    ```
+    pip install -r requirements.txt
+    ```
+4. Run the scripts:
+    ```
+    main
+    ```
+5. Load the Models from `/models` catalog
+   ```
+   joblib.load(model_path)
+   ```
+### Future Scope
+1. **Fine-Tuning Deep Learning Models:** The performance of DistilBERT (RNN) was lower than expected. Future work 
+could involve fine-tuning on domain-specific text data and experimenting with larger transformer models like BERT, 
+RoBERTa, or T5 for improved contextual understanding.
+2. **Hybrid Model Approaches:** A possible improvement could be combining traditional ML models with deep learning 
+embeddings, such as using DistilBERT embeddings as input features for Logistic Regression or k-NN. This could 
+provide a balance between accuracy and computational efficiency.
+3. **Feature Engineering Enhancements:** Further improvements could be explored by experimenting with different 
+vectorization techniques such as fastText, GloVe, or Word2Vec embeddings to see if they provide better representations 
+for classification.
+4. **Real-Time Classification Pipeline:** Deploying the model in a real-time system with streaming data processing 
+using frameworks like Apache Kafka or FastAPI would enhance its practical applicability. Optimizing for low-latency 
+predictions will be crucial for scalability.
+5. **Multi-Label Classification:** The current approach assumes a single category per text entry. A future extension 
+could involve multi-label classification using techniques like sigmoid activation functions or attention mechanisms 
+to handle overlapping categories.
+6. **Bias and Fairness Analysis:** Analyzing model predictions for bias and fairness across different text categories 
+can help ensure the system provides balanced and unbiased predictions, particularly if deployed in sensitive 
+applications.
+By addressing these areas, the project can be expanded for better accuracy, efficiency, and real-world deployment, 
+ensuring adaptability across various text classification tasks.
