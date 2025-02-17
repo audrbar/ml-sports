@@ -168,6 +168,7 @@ to justify their resource requirements.
 | k-Nearest Neighbors                     |              N-Gram |     416 KB |   0.9059 |
 | Tensorflow Keras Sequential Model (SNN) |              TF-IDF |    32,4 MB |   0.9412 |
 | Distil Bert Base Uncased Model (RNN)    | DistilBertTokenizer |   267,6 MB |   0.8745 |
+Find Trained Models Winners in `/models` catalog.
 ## Conclusions
 This project aimed to classify text data using various machine learning and deep learning models, leveraging different 
 vectorization techniques. We evaluated models ranging from traditional ML classifiers (Logistic Regression, k-NN) 
@@ -175,15 +176,6 @@ to deep learning architectures (SNN and RNN-based DistilBERT). The key finding w
 TF-IDF and SNN with TF-IDF performed best, both achieving 94.12% accuracy, demonstrating that traditional models 
 can be competitive with deep learning when using appropriate feature engineering. However, DistilBERT (RNN) showed 
 lower accuracy (87.45%), suggesting that fine-tuning on this dataset might improve performance.
-#### Challenges and Solutions
-- `Data Imbalance`: Some categories had fewer samples, affecting training balance. This was addressed by applying 
-category filtering and sampling to ensure a more uniform class distribution.
-- `Model Convergence Issues`: The lbfgs solver in Logistic Regression faced convergence warnings, which were mitigated 
-by scaling data and increasing max iterations.
-- `Computational Constraints`: Deep learning models, particularly DistilBERT, had large model sizes (267.6 MB) 
-and longer inference times. Optimizations such as reducing sequence length and batch size helped improve efficiency.
-- `Deprecation Warnings in Pandas`: Deprecated behavior in groupby().apply() was updated using group_keys=False 
-and include_groups=False.
 ## Usage
 1. Clone the Repository
     ```
@@ -207,6 +199,10 @@ and include_groups=False.
     ```
     main
     ```
+5. Load the Models from `/models` catalog
+   ```
+   joblib.load(model_path)
+   ```
 ### Future Scope
 1. **Fine-Tuning Deep Learning Models:** The performance of DistilBERT (RNN) was lower than expected. Future work 
 could involve fine-tuning on domain-specific text data and experimenting with larger transformer models like BERT, 
