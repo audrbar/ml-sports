@@ -16,7 +16,7 @@ their respective categories (e.g., basketball, soccer, football). Articles are s
 dataset is saved in CSV format, containing:
 - `text`: the article content;
 - `category`: the predefined category assigned to the article.
-> :memo: **Info:** 2400 articles where scraped and saved for processing.
+> :memo: **Info:** 2740 articles where scraped and saved for processing.
 
 The main dataset / project features, witch are important for the classifiers picking, are:\
 `General text classification` `Predefined labels` `Small dataset` `Multi-class classification` 
@@ -28,9 +28,10 @@ with `Pandas` library;
 - the text is cleaned with `Natural Language Toolkit (NLTK)` (removes HTML tags, punctuation, stopwords, etc.);
 - the text is normalized with `NLTK's WordNetLemmatizer` (converts to lowercase, lemmatize (converts words to their 
 base form) and `NLTK's PorterStemmer` (stemming reduces words to their root form);
-- the text is tokenized and vectorized using **4** methods: `TF-IDF`, `NGRAM`, `Word2Vector`, `FastText` (embeddings).
-> :memo: **Info:** 2100 records remaining after handling missing values, removed duplicates.\
-> :memo: **Info:** 1270 records remaining after filtering, sampling and some categories dropped.
+- the text is tokenized and vectorized using **4** methods: `TF-IDF`, `NGRAM (2, 3)`, `Word2Vector`, 
+`FastText` (embeddings).
+> :memo: **Info:** 2370 records remaining after handling missing values, removed duplicates.\
+> :memo: **Info:** 1300 records remaining after filtering, sampling and some categories dropped.
 
 ## Picking Classifiers for Text Classification
 Text classification is a fundamental Natural Language Processing (NLP) task that involves assigning predefined 
@@ -105,33 +106,33 @@ density and noise. Selected Classifiers to evaluate in the project:
 #### KNeighbors Classifier Best Params Across Different Vectorization Methods:
 | Dataset  |     Metric | n_neighbors |     weights | Mean Cross-Validation Accuracy |
 |----------|-----------:|------------:|------------:|-------------------------------:|
-| TF-IDF   |  euclidean |           7 |    distance |                         0.9056 |
-| Word2Vec |  euclidean |          10 |    distance |                         0.7757 |
-| N-Gram   |  euclidean |          10 |    distance |                         0.8888 |
-| FastText |  euclidean |           7 |    distance |                         0.8515 |
+| TF-IDF   |  euclidean |           5 |    distance |                         0.9488 |
+| Word2Vec |  euclidean |          10 |    distance |                         0.8164 |
+| N-Gram   |  euclidean |           5 |    distance |                         0.9344 |
+| FastText |  euclidean |           3 |    distance |                         0.8947 |
 #### KNeighbors Classifier Performance Comparison Across Different Vectorization Methods:
 ![Data Plot](./img/knn_performance.png)
 ![Data Plot](./img/knn_table.png)
-#### KNeighbors Classifier Confusion Matrix on N-Gram Vectorization:
+#### KNeighbors Classifier Confusion Matrix on TF-IDF Vectorization:
 ![Data Plot](./img/knn_matrix.png)
 ### Logistic Regression Classifier fine-tuning GridSearchCV params:
 - `threshold` 0.01, 0.1, 1, 10;
 - `solver` lbfgs, liblinear, saga;
 - `max_iter` 100, 200, 300, 600.
 #### Logistic Regression Classifier Best Params Across Different Vectorization Methods:
-| Dataset  | Threshold | Max_Iter | Solver |  Accuracy |
-|----------|----------:|---------:|-------:|----------:|
-| TF-IDF   |        10 |      100 |   saga |    0.9412 |
-| Word2Vec |        10 |      200 |  lbfgs |    0.8745 |
-| N-Gram   |        10 |      100 |   saga |    0.9255 |
-| FastText |        10 |      200 |  lbfgs |    0.8706 |
+| Dataset  | Threshold | Max_Iter |    Solver | Accuracy |
+|----------|----------:|---------:|----------:|---------:|
+| TF-IDF   |        10 |      100 |     lbfgs |   0.9768 |
+| Word2Vec |        10 |      200 | liblinear |   0.8996 |
+| N-Gram   |         1 |      100 |     lbfgs |   0.9730 |
+| FastText |        10 |      200 |      saga |   0.9151 |
 #### Logistic Regression Classifier Best Params Across Different Vectorization Methods:
 ![Data Plot](./img/lr_performance.png)
 ![Data Plot](./img/lr_table.png)
 #### Logistic Regression Classifier Confusion Matrix on TF-IDF Vectorization:
 ![Data Plot](./img/lr_matrix.png)
 ## Neural Network Models
-### Simple Neural Network (SNN) - Tensorflow Keras Sequential Model
+### Simple Neural Network (SNN)-Tensorflow Keras Sequential Model
 It is a simple (basic) fead-forward neural network model. Input layer accepts vectorized text. Hidden layers fully 
 connected with activation functions (e.g., ReLU). Output layer softmax for multi-class classification.
 ![Data Plot](./img/snn_model.png)
@@ -145,7 +146,7 @@ connected with activation functions (e.g., ReLU). Output layer softmax for multi
 ![Data Plot](./img/snn_tuning_results.png)
 ![Data Plot](./img/snn_best_params.png)
 ![Data Plot](./img/snn_test_accuracy.png)
-### Recurrent Neural Network (RNN) - Long Short-Term Memory (LSTM)
+### Recurrent Neural Network (RNN)-Long Short-Term Memory (LSTM)
 RNN variants are LSTM or GRU designed for handling sequential text data. 
 ![Data Plot](./img/rnn_model.png)
 #### FastText dataset results
@@ -164,11 +165,12 @@ to justify their resource requirements.
 
 | Classifier                              |          Vectorizer | Model Size | Accuracy |
 |-----------------------------------------|--------------------:|-----------:|---------:|
-| Logistic Regression                     |              TF-IDF |       8 KB |   0.9412 |
-| k-Nearest Neighbors                     |              N-Gram |     416 KB |   0.9059 |
-| Tensorflow Keras Sequential Model (SNN) |              TF-IDF |    32,4 MB |   0.9412 |
+| Logistic Regression                     |              TF-IDF |       4 KB |   0.9768 |
+| k-Nearest Neighbors                     |              TF-IDF |     423 KB |   0.9488 |
+| Tensorflow Keras Sequential Model (SNN) |              TF-IDF |    32,4 MB |   0.9768 |
 | Distil Bert Base Uncased Model (RNN)    | DistilBertTokenizer |   267,6 MB |   0.8745 |
-Find Trained Models Winners in `/models` catalog.
+
+Find Saved Trained Models Winners and label encoders in `/models` catalog for further training or usage.
 ## Conclusions
 This project aimed to classify text data using various machine learning and deep learning models, leveraging different 
 vectorization techniques. We evaluated models ranging from traditional ML classifiers (Logistic Regression, k-NN) 
@@ -199,9 +201,13 @@ lower accuracy (87.45%), suggesting that fine-tuning on this dataset might impro
     ```
     main
     ```
-5. Load the Models from `/models` catalog
+5. Load models from `/models` catalog
    ```
-   joblib.load(model_path)
+   model = joblib.load(model_path)
+   ```
+6. Load encoders from `/models` catalog
+   ```
+   label_encoder = pickle.load(label_encoder_path)
    ```
 ### Future Scope
 1. **Fine-Tuning Deep Learning Models:** The performance of DistilBERT (RNN) was lower than expected. Future work 
@@ -219,7 +225,11 @@ predictions will be crucial for scalability.
 5. **Multi-Label Classification:** The current approach assumes a single category per text entry. A future extension 
 could involve multi-label classification using techniques like sigmoid activation functions or attention mechanisms 
 to handle overlapping categories.
-6. **Bias and Fairness Analysis:** Analyzing model predictions for bias and fairness across different text categories 
+6. **Vector Storage in Databases:** Storing text embeddings (vectors) in vector databases like FAISS, Pinecone, Weaviate, 
+or Milvus will allow for efficient similarity search and retrieval. This would be useful for semantic search, nearest 
+neighbor classification, and recommendation systems. A structured database like PostgreSQL with the pgvector extension 
+can also be explored for efficient indexing and querying of embeddings.
+7. **Bias and Fairness Analysis:** Analyzing model predictions for bias and fairness across different text categories 
 can help ensure the system provides balanced and unbiased predictions, particularly if deployed in sensitive 
 applications.
 By addressing these areas, the project can be expanded for better accuracy, efficiency, and real-world deployment, 

@@ -126,7 +126,3 @@ if __name__ == "__main__":
     train_model(model, X_train, y_train, X_val, y_val, epochs=50, batch_size=best_params['batch_size'])
     evaluate_model(model, X_test, y_test)
     save_model_and_encoder(model, label_encoder, SNN_MODEL, SNN_ENCODER)
-
-# Best Hyperparameter Configuration:
-# {'neurons': [512, 256], 'dropout_rates': [0.3, 0.3], 'batch_size': 32, 'val_accuracy': 0.9867549538612366}
-# Test Accuracy: 0.9787

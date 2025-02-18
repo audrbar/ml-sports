@@ -118,9 +118,3 @@ if __name__ == "__main__":
         print(f"\nDataset: {dataset_key}")
         print(metrics_df)
         plot_metrics_all(metrics_df)
-
-# Dataset: TF-IDF
-#                         Accuracy  Precision    Recall  F1 Score
-# Classifier
-# LogisticRegression      0.957447   0.967682  0.960829  0.963182
-# KNeighborsClassifier    0.952128   0.963819  0.958212  0.960347

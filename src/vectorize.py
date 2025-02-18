@@ -20,7 +20,7 @@ def vectorize_tfidf(data_frame, text_columns, max_features=5000):
 
     for column in text_columns:
         if column in data_frame.columns:
-            print(f"- Vectorizing column: '{column}';")
+            print(f"Vectorizing column: '{column}';")
             tfidf_matrix = vectorizer.fit_transform(data_frame[column].fillna(""))
             data_frame[column] = list(tfidf_matrix.toarray())
         else:
