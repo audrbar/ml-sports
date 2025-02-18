@@ -75,5 +75,3 @@ if __name__ == "__main__":
     model.save(RNN_MODEL)
     print(model.summary())
     print("Model and encoder saved.")
-
-# Best model: FastText with accuracy: 0.4438

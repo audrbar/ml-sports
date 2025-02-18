@@ -70,7 +70,7 @@ if __name__ == "__main__":
     df_clean = handle_values(df, ['url', 'title', 'content'])
     df_category = category_column(df_clean)
     df_distribution = category_distribution(df_category, ["fannation", "onsi"],
-                                            target_column="category", min_count=50, max_samples=220)
+                                            target_column="category", min_count=71, max_samples=240)
 
     write_csv(df_distribution, ARTICLES_CLEANED_CSV)
     logging.info("Data processing completed.")
