@@ -7,7 +7,7 @@ trains at least three different models, evaluates their performance and determin
 for text classification.
 ### Utilities
 Utility functions are used throughout the project to adjust pandas display settings, write data to CSV files, 
-binary data - to pickle files, load the data from these files, split the datasets into training and test sets, 
+binary data-to pickle files, load the data from these files, split the datasets into training and test sets, 
 also into training, validation and test sets, find and save unique values.
 ### Data Analyzed
 A sports articles dataset is used for the project setting, sourced from Sports Illustrated, each labeled with 
@@ -16,6 +16,8 @@ their respective categories (e.g., basketball, soccer, football). Articles are s
 dataset is saved in CSV format, containing:
 - `text`: the article content;
 - `category`: the predefined category assigned to the article.
+
+Data sample file is accessible in folder `data_sample`.
 > :memo: **Info:** 2740 articles where scraped and saved for processing.
 
 The main dataset / project features, witch are important for the classifiers picking, are:\
@@ -28,9 +30,11 @@ with `Pandas` library;
 - the text is cleaned with `Natural Language Toolkit (NLTK)` (removes HTML tags, punctuation, stopwords, etc.);
 - the text is normalized with `NLTK's WordNetLemmatizer` (converts to lowercase, lemmatize (converts words to their 
 base form) and `NLTK's PorterStemmer` (stemming reduces words to their root form);
-- the text is tokenized and vectorized using **4** methods: `TF-IDF`, `NGRAM (2, 3)`, `Word2Vector`, 
-`FastText` (embeddings).
+- the text is tokenized and vectorized using **3** methods: `TF-IDF`, `Word2Vector`, `FastText` (embeddings), also 
+`NGRAM (2, 3)` data preparation applied.
 > :memo: **Info:** 2370 records remaining after handling missing values, removed duplicates.\
+
+![Data Plot](./img/class_distribution.png)
 > :memo: **Info:** 1300 records remaining after filtering, sampling and some categories dropped.
 
 ## Picking Classifiers for Text Classification
@@ -123,9 +127,9 @@ density and noise. Selected Classifiers to evaluate in the project:
 | Dataset  | Threshold | Max_Iter |    Solver | Accuracy |
 |----------|----------:|---------:|----------:|---------:|
 | TF-IDF   |        10 |      100 |     lbfgs |   0.9768 |
-| Word2Vec |        10 |      200 | liblinear |   0.8996 |
-| N-Gram   |         1 |      100 |     lbfgs |   0.9730 |
-| FastText |        10 |      200 |      saga |   0.9151 |
+| Word2Vec |        50 |      200 | liblinear |   0.9189 |
+| N-Gram   |        10 |      100 |     lbfgs |   0.9730 |
+| FastText |        50 |      100 | liblinear |   0.9151 |
 #### Logistic Regression Classifier Best Params Across Different Vectorization Methods:
 ![Data Plot](./img/lr_performance.png)
 ![Data Plot](./img/lr_table.png)
@@ -175,7 +179,7 @@ Find Saved Trained Models Winners and label encoders in `/models` catalog for fu
 This project aimed to classify text data using various machine learning and deep learning models, leveraging different 
 vectorization techniques. We evaluated models ranging from traditional ML classifiers (Logistic Regression, k-NN) 
 to deep learning architectures (SNN and RNN-based DistilBERT). The key finding was that Logistic Regression with 
-TF-IDF and SNN with TF-IDF performed best, both achieving 94.12% accuracy, demonstrating that traditional models 
+TF-IDF and SNN with TF-IDF performed best, both achieving 97.68% accuracy, demonstrating that traditional models 
 can be competitive with deep learning when using appropriate feature engineering. However, DistilBERT (RNN) showed 
 lower accuracy (87.45%), suggesting that fine-tuning on this dataset might improve performance.
 ## Usage
@@ -234,3 +238,16 @@ can help ensure the system provides balanced and unbiased predictions, particula
 applications.
 By addressing these areas, the project can be expanded for better accuracy, efficiency, and real-world deployment, 
 ensuring adaptability across various text classification tasks.
+### Resources
+[Performance comparison of multi class classification algorithms](https://gursev-pirge.medium.com/performance-comparison-of-multi-class-classification-algorithms-606e8ba4e0ee)\
+[Multiclass Classification](https://builtin.com/machine-learning/multiclass-classification)\
+[Towards Data Science](https://towardsdatascience.com/)\
+[KDnuggets](https://www.kdnuggets.com/)\
+[Analytics Vidhya](https://www.analyticsvidhya.com/)\
+[Data Science Central](https://www.datasciencecentral.com/)\
+[Medium](https://medium.com/)\
+[The batch](https://read.deeplearning.ai/the-batch/)\
+[Data Mahadev](https://datamahadev.com/category/analytics/)\
+[Paper with code](https://paperswithcode.com/)\
+[Random Forest Algorithm](https://builtin.com/data-science/random-forest-algorithm)\
+[Machine Learning in Science](https://mindthegraph.com/blog/lt/machine-learning-in-science/)
